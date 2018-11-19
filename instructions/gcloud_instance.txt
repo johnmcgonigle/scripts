@@ -1,0 +1,30 @@
+# The following is a description of how to perform various processes to do with gcloud instances.
+
+##########################
+# # # Preparing auth # # #
+##########################
+eval `ssh-agent -s`
+ssh-add ~/.ssh/google_compute_engine
+
+########################
+# Starting an instance #
+########################
+gcloud compute instances start [name-of-instance]
+
+# Example:
+gcloud compute instances start data-test-oncotest-2012-exome
+
+############################
+# List available instances #
+############################
+gcloud compute instances list
+
+# To list details of a single instance of interest
+gcloud compute instances list | fgrep data-test-oncotest-2012-exome 
+
+
+# Making an instance
+dockerp
+eval `ssh-agent -s`
+ssh-add ~/.ssh/google_compute_engine
+~/launch_testing/pdx-analysis_master/pdx-analysis/src/bash/gcloud_pipeline_instance_start.sh [name-of-instance]

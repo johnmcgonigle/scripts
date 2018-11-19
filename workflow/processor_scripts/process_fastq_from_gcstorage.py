@@ -68,7 +68,7 @@ class FastQC():
         self.wd = working_dir
         self.run_log = os.path.join(self.wd, 'run_log.txt')
         self.processed_log = os.path.join(self.wd, 'files_processed.txt')
-        self.processed_log = os.path.join(self.wd, 'failed.txt')
+        self.failed_log = os.path.join(self.wd, 'failed.txt')
 
     @classmethod
     def copy_file(cls, remote_path, local_dir):
@@ -86,9 +86,9 @@ class FastQC():
         rm_cmd = f'''rm -f {fastq_path}'''
         _ = _proc_handler(rm_cmd)
 
-    @classmethod
-    def summarise_fastqc_output(cls, script_path):
-        cmd = f'''python {script_path} -i {self.wd}'''
+    def summarise_fastqc_output(self, script_path):
+        wd = self.wd
+        cmd = f'''python {script_path} -i {wd}'''
         _ = _proc_handler(cmd)
 
     def _log_progress(self, message):
@@ -102,6 +102,13 @@ class FastQC():
     def _log_failed(self, file):
         with open(self.processed_log, 'a') as log:
             log.write(file + '\n')
+
+    def _load_progress(self):
+        with open(self.processed_log, 'r') as log:
+            for line in log:
+                yield line.strip('\n')
+
+
 
     def fastqc_file_handler(self, remote_path, cwl_script_path):
         self._log_progress(' '.join(['Copying of', remote_path, 'starting']))
@@ -117,13 +124,20 @@ def main():
     args = get_args()
     fastq_file_path_list = get_fastq_files_from_cloud(args.bucket_path)
     fq = FastQC(args.working_dir)
+
+    if os.path.isfile(fq.processed_log):
+        # A bit of hack to stop having to start from the beginning
+        previous = list(fq._load_progress())
+        fastq_file_path_list = list(set(fastq_file_path_list) - set(previous))
+
+    print('Beginning analysis.')
     for fastq_path in fastq_file_path_list:
         try:
             fq.fastqc_file_handler(fastq_path, args.cwl_script_path)
         except:
             fq._log_failed(fastq_path)
 
-
+    print('Beginning summarisation process')
     fq.summarise_fastqc_output(args.summariser_script_path)
 
 

@@ -1,0 +1,5 @@
+eval `ssh-agent -s`
+ssh-add ~/.ssh/google_compute_engine
+export DOCKER_PASSWORD=n3p8m5p3
+
+~/launch_testing/./ppqe_startup.sh [NAME_OF_INSTANCE] # Can't contain _

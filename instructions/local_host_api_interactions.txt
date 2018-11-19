@@ -1,0 +1,15 @@
+[Address]
+http://localhost:3000
+
+[GET analysis details]
+http://localhost:3000/analysis/view-analysis?id=[GUID-OF-ANYALYSIS]
+
+	example:
+		http://localhost:31337/analysis/update-analysis?id=66f6723f-39ad-444f-a39f-4571bfb6b832
+
+[POST analysis information]
+http://localhost:3000/analysis/update-analysis/
+
+example:
+	see ~/git/pdx-analysis
+-analysis/scripts/python/validation/get_defined_metrics.py QualityMetrics.post for more details. 

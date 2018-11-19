@@ -35,6 +35,9 @@ alias tmn=' tmux new -s '
 alias tmk=' tmux kill-session -t '
 
 
+alias dkr='docker run -v /mnt/data2/:/scratch/data --rm -t -i fastqc'
+
+
 function cdmod()
  {
      function cdscr()
